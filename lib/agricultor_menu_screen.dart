@@ -21,7 +21,7 @@ class AgricultorMenuScreen extends StatelessWidget {
           SafeArea(
             child: Column(
               children: [
-                const SizedBox(height: 30),
+                const SizedBox(height: 20),
                 const Text(
                   'Organiza e infórmate',
                   style: TextStyle(
@@ -31,13 +31,13 @@ class AgricultorMenuScreen extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 const CircleAvatar(
                   radius: 40,
                   backgroundColor: Colors.white,
                   child: Icon(Icons.agriculture, size: 50, color: Colors.black),
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
@@ -60,6 +60,10 @@ class AgricultorMenuScreen extends StatelessWidget {
                       const SizedBox(height: 16),
                       _menuButton("Dashboard", () {
                         Navigator.pushNamed(context, '/dashboardAgricultor');
+                      }),
+                      const SizedBox(height: 16),
+                      _menuButton("Actividades", () {
+                        Navigator.pushNamed(context, '/actividades');
                       }),
                     ],
                   ),

@@ -1,8 +1,10 @@
+import 'package:agri_cria_app/actividades_screen.dart';
 import 'package:agri_cria_app/agricultor_menu_screen.dart';
 import 'package:agri_cria_app/agricultor_screen.dart';
 import 'package:agri_cria_app/asesoramiento_ganadero_screen.dart';
 import 'package:agri_cria_app/chat_ia_ganadero_screen.dart';
 import 'package:agri_cria_app/contenido_educativo_ganadero.dart';
+import 'package:agri_cria_app/detalle_actividad_screen.dart';
 import 'package:agri_cria_app/ganadero_screen.dart';
 import 'package:agri_cria_app/asesoramiento_especialista_screen.dart';
 import 'package:agri_cria_app/asesoramiento_screen.dart';
@@ -62,6 +64,11 @@ class AgriCriaApp extends StatelessWidget {
         '/asesoramientoIAGanadero': (context) => const ChatIAGanaderoScreen(),
         '/dashboard': (context) => const DashboardScreen(),
         '/dashboardAgricultor': (context) => const DashboardAgricultorScreen(),
+        '/actividades': (context) => const ActividadesScreen(),
+        '/detalleActividades': (context) => const DetalleActividadScreen(
+              fecha: '',
+              comentario: '',
+            )
       },
     );
   }

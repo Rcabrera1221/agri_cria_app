@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class RegistrarActividadScreen extends StatefulWidget {
   const RegistrarActividadScreen({super.key});
@@ -12,11 +15,20 @@ class RegistrarActividadScreen extends StatefulWidget {
 class _RegistrarActividadScreenState extends State<RegistrarActividadScreen> {
   DateTime? selectedDate;
   final TextEditingController _commentController = TextEditingController();
+  String nombreUsuario = 'Usuario';
 
   @override
   void initState() {
     super.initState();
-    selectedDate = DateTime.now(); // ✅ Fecha inicial: hoy
+    selectedDate = DateTime.now();
+    cargarNombreUsuario();
+  }
+
+  Future<void> cargarNombreUsuario() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      nombreUsuario = prefs.getString('nombre') ?? 'Usuario';
+    });
   }
 
   Future<void> _pickDate(BuildContext context) async {
@@ -42,15 +54,7 @@ class _RegistrarActividadScreenState extends State<RegistrarActividadScreen> {
         ),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Actividad registrada con éxito.'),
-          backgroundColor: Colors.green,
-        ),
-      );
-      Future.delayed(const Duration(seconds: 1), () {
-        Navigator.pop(context);
-      });
+      enviarDatos();
     }
   }
 
@@ -61,7 +65,6 @@ class _RegistrarActividadScreenState extends State<RegistrarActividadScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Fondo
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -73,9 +76,9 @@ class _RegistrarActividadScreenState extends State<RegistrarActividadScreen> {
           SafeArea(
             child: Column(
               children: [
-                // Encabezado
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -83,14 +86,14 @@ class _RegistrarActividadScreenState extends State<RegistrarActividadScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Hola, Luis",
-                            style: TextStyle(
+                            "Hola, $nombreUsuario",
+                            style: const TextStyle(
                               color: Colors.yellow,
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text(
+                          const Text(
                             "Registrar actividad",
                             style: TextStyle(
                               color: Colors.white,
@@ -99,7 +102,7 @@ class _RegistrarActividadScreenState extends State<RegistrarActividadScreen> {
                           ),
                         ],
                       ),
-                      CircleAvatar(
+                      const CircleAvatar(
                         radius: 30,
                         backgroundColor: Colors.white,
                         child: Icon(Icons.agriculture, color: Colors.black),
@@ -108,8 +111,6 @@ class _RegistrarActividadScreenState extends State<RegistrarActividadScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-
-                // Tarjeta
                 Expanded(
                   child: Container(
                     margin: const EdgeInsets.all(16),
@@ -138,27 +139,24 @@ class _RegistrarActividadScreenState extends State<RegistrarActividadScreen> {
                           ],
                         ),
                         const SizedBox(height: 8),
-
-                        // Campo solo lectura de fecha
                         GestureDetector(
                           onTap: () => _pickDate(context),
-                          child: AbsorbPointer(
-                            child: TextField(
-                              decoration: InputDecoration(
-                                hintText: formattedDate,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 12, horizontal: 16),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              formattedDate,
+                              style: const TextStyle(fontSize: 16),
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 20),
                         const Text("Comentarios"),
                         const SizedBox(height: 8),
-
-                        // Comentarios
                         Container(
                           height: 120,
                           decoration: BoxDecoration(
@@ -174,10 +172,7 @@ class _RegistrarActividadScreenState extends State<RegistrarActividadScreen> {
                             ),
                           ),
                         ),
-
                         const Spacer(),
-
-                        // Botón Guardar
                         Center(
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -198,8 +193,6 @@ class _RegistrarActividadScreenState extends State<RegistrarActividadScreen> {
                     ),
                   ),
                 ),
-
-                // Footer
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   color: Colors.black54,
@@ -233,5 +226,64 @@ class _RegistrarActividadScreenState extends State<RegistrarActividadScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> enviarDatos() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Token no disponible. Inicia sesión de nuevo.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final url = Uri.parse(
+        'https://api-agri-cria-production.up.railway.app/api/guardarActividad');
+    //final url = Uri.parse('http://localhost:3000/api/guardarActividad');
+
+    final Map<String, dynamic> data = {
+      'fecha': selectedDate!.toIso8601String(),
+      'comentarios': _commentController.text.trim(),
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(data),
+      );
+
+      final responseData = jsonDecode(response.body);
+      final mensaje =
+          responseData['message'] ?? 'Respuesta del servidor sin mensaje';
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(mensaje)),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error ${response.statusCode}: $mensaje'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error de red o servidor: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }
