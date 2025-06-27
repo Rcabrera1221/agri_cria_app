@@ -46,6 +46,7 @@ dev_dependencies:
   image_picker: ^1.0.7
   file_picker: ^6.1.1
   url_launcher: ^6.2.6
+  fl_chart: ^0.64.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -75,6 +76,7 @@ flutter:
     - assets/articles_image.jpg
     - assets/ganado_background.jpg
     - assets/asesoramiento_humano.png
+    - assets/fondoDetalleActividades.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
