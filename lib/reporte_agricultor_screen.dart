@@ -200,8 +200,8 @@ class _ReportesAgricultorScreenState extends State<ReportesAgricultorScreen> {
       throw Exception('Token no disponible. Inicia sesión de nuevo.');
     }
 
-    final url = Uri.parse(
-        'https://api-agri-cria-production.up.railway.app/api/reportes');
+    final url = Uri.parse('https://api-agri-cria-production.up.railway.app/api/reportes');
+    //final url = Uri.parse('http://localhost:3000/api/reportes');
 
     final Map<String, dynamic> data = {
       'filtro': filtro,

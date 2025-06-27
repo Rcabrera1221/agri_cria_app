@@ -1,3 +1,4 @@
+import 'package:agri_cria_app/Crear_notificacion_screen.dart';
 import 'package:agri_cria_app/actividades_screen.dart';
 import 'package:agri_cria_app/agricultor_menu_screen.dart';
 import 'package:agri_cria_app/agricultor_screen.dart';
@@ -68,7 +69,8 @@ class AgriCriaApp extends StatelessWidget {
         '/detalleActividades': (context) => const DetalleActividadScreen(
               fecha: '',
               comentario: '',
-            )
+            ),
+        '/crearNotificacion': (context) => const CrearNotificacionScreen(),
       },
     );
   }
