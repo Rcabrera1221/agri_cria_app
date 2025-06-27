@@ -113,7 +113,7 @@ Widget _menuButton(String text, VoidCallback onPressed) {
     width: double.infinity,
     child: ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.lightBlueAccent,
+        backgroundColor: Colors.green,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(
