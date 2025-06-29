@@ -40,13 +40,15 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  http: ^0.13.6
+  http: ^1.4.0
   fluttertoast: ^8.2.4
   shared_preferences: ^2.2.2
   image_picker: ^1.0.7
   file_picker: ^6.1.1
   url_launcher: ^6.2.6
   fl_chart: ^0.64.0
+  flutter_local_notifications: ^19.1.0
+  timezone: ^0.10.1
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
