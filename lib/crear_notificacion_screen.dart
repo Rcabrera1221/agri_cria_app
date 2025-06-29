@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:agri_cria_app/envia_notificaciones.dart';
 
 class CrearNotificacionScreen extends StatefulWidget {
   const CrearNotificacionScreen({super.key});
@@ -17,10 +18,12 @@ class _CrearNotificacionScreenState extends State<CrearNotificacionScreen> {
   String selectedReminder = 'En 1 hora';
 
   final List<String> reminderOptions = [
+    'En 5 segundos',
+    'En 10 segundos',
     'En 1 hora',
-    'En 2 hora',
-    'En 3 hora',
-    'En 1 días',
+    'En 2 horas',
+    'En 3 horas',
+    'En 1 día',
     'En 2 días',
     'En 3 días',
   ];
@@ -47,7 +50,8 @@ class _CrearNotificacionScreenState extends State<CrearNotificacionScreen> {
     final comentarios = commentController.text;
     final recordatorio = selectedReminder;
 
-	final url = Uri.parse('https://api-agri-cria-production.up.railway.app/api/guardaNotificaciones');
+    final url = Uri.parse(
+        'https://api-agri-cria-production.up.railway.app/api/guardaNotificaciones');
     //final url = Uri.parse('http://localhost:3000/api/guardaNotificaciones');
 
     final body = jsonEncode({
@@ -70,6 +74,16 @@ class _CrearNotificacionScreenState extends State<CrearNotificacionScreen> {
         // Éxito
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Notificación guardada correctamente')),
+        );
+        //se genera notificacion
+        final [en, numero, tiempo] = recordatorio.split(' ');
+        NotificationService.init();
+        NotificationService.scheduleReminder(
+          id: 1,
+          title: 'Notificacion',
+          body: comentarios,
+          number: int.parse(numero),
+          time: tiempo,
         );
         Navigator.pop(context);
       } else {
